@@ -25,6 +25,7 @@ function preload() {
 }
 
 var whale1;
+var whales = [];
 
 var thrust = 300;
 var rotateForce = 70;
@@ -37,13 +38,19 @@ function create() {
 	game.add.sprite(0,0,'sky');
 
 	cursors = game.input.keyboard.createCursorKeys();
-	whale1 = create_whale(300,300,'arrow',cursors);
+	for(i=0; i<10; i++) {
+		whales.push(create_whale(100+i*200,300,'arrow',cursors));
+	}
+	//whale1 = create_whale(300,300,'arrow',cursors);
 
 	
 }
 
 function update() {
-	whale1.update();
+	//whale1.update();
+	for(whale of whales) {
+		whale.update();
+	}
 }
 
 function create_whale(x,y,sprite,cursors) {
@@ -80,15 +87,16 @@ function create_whale(x,y,sprite,cursors) {
 
 	//update function
 	whale.update = function() {
-		if(this.cursors.left.isDown) {
+		var turn = Math.random()*3;
+		if(this.cursors.left.isDown || turn < 1) {
 			this.upper.body.rotateLeft(rotateForce);
-		} else if(this.cursors.right.isDown){
+		} else if(this.cursors.right.isDown || turn < 2){
 			this.upper.body.rotateRight(rotateForce);
 		} else {
 			this.upper.body.setZeroRotation();
 		}
 
-		if(this.cursors.up.isDown) {
+		if(this.cursors.up.isDown || Math.random() < .3) {
 			this.upper.body.thrust(thrust);
 		}
 	};
