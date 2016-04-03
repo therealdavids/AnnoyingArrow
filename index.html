@@ -87,6 +87,9 @@ var allCollisionGroups;
 var p1hp;
 var p2hp;
 
+var GreenAlive = true;
+var RedAlive = true;
+
 function create() {
 	game.physics.startSystem(Phaser.Physics.P2JS);
 	game.physics.p2.updateBoundsCollisionGroup();
@@ -129,6 +132,8 @@ function create() {
 
 	whales[0].control = whales[0].cursorControl;
 	whales[1].control = whales[1].cursorControl;
+	whales[0].name = 'Green';
+	whales[1].name = 'Red';
 	whales[0].tint = 0xFF00FF;
 
 	p1hp = game.add.text(250, 10, '100%', {} );
@@ -143,6 +148,15 @@ function update(gameData) {
 
 	p1hp.text = 'P1: ' + whales[0].getHealth() + '%';
 	p2hp.text = 'P2: ' + whales[1].getHealth() + '%';
+
+	if(!GreenAlive || !RedAlive) {
+		if(RedAlive) {
+			alert("Red Player Wins!");
+		}
+		if(GreenAlive) {
+			alert("Green Player Wins!");
+		}
+	}
 	//clean up dead
 	for(i=0; i<whales.length; i++) {
 		if(whales[i].dead) {
@@ -295,8 +309,14 @@ function create_whale(x,y,sprite,cursors,scale) {
 		this.lower.destroy();
 		this.tail.destroy();
 		this.dead = true;
+		if(this.name == 'Red') {
+			RedAlive = false;
+		}
+		if(this.name == 'Green') {
+			GreenAlive = false;
+		}
 
-		alert('WIN!')
+		//alert('WIN!')
 	};
 
 	//update function
