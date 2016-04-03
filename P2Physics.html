@@ -90,7 +90,7 @@ function create_whale(x,y,sprite,cursors,scale) {
 	whale.upper = whale.group.create(x,y,sprite);
 	game.physics.p2.enable(whale.upper,false);
 	//record eating food
-	whale.upper.eaten = false;
+	whale.upper.eatFood = false;
 
 	//create lower
 	whale.lower = whale.group.create(x,y+whale.upper.height,sprite);
@@ -193,8 +193,8 @@ function create_whale(x,y,sprite,cursors,scale) {
 
 	whale.update = function() {
 		this.control();
-		if(this.upper.eaten) {
-			this.upper.eaten = false;
+		if(this.upper.eatFood) {
+			this.upper.eatFood = false;
 			this.scaleTo(this.scale+.1);
 			if(this.scale > maxScale) {
 				this.scaleTo(minScale);
@@ -223,7 +223,7 @@ function eatFood(hitbox, foodbox) {
 		foodbox.sprite.kill();
 
 	foodbox.destroy();
-	hitbox.sprite.eaten = true;
+	hitbox.sprite.eatFood = true;
 }
 
 </script>
