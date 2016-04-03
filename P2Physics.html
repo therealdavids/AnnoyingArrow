@@ -1,6 +1,6 @@
-<!doctype html> 
-<html lang="en"> 
-<head> 
+<!doctype html>
+<html lang="en">
+<head>
 	<meta charset="UTF-8" />
 	<title>David P2 Test</title>
 	<script type="text/javascript" src="js/phaser.min.js"></script>
@@ -24,26 +24,36 @@ function preload() {
 	game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
 }
 
-var whale1;
+var whale1, whale2;
 
 var thrust = 300;
 var rotateForce = 70;
 var middleJointForce = 70;
 var tailJointForce = 50;
 
+var hitboxCollisionGroup;
+var hurtboxCollisionGroup;
 
 function create() {
 	game.physics.startSystem(Phaser.Physics.P2JS);
+	game.physics.p2.updateBoundsCollisionGroup();
+	game.physics.p2.setImpactEvents(true);
+
+	hitboxCollisionGroup = game.physics.p2.createCollisionGroup();
+	hurtboxCollisionGroup = game.physics.p2.createCollisionGroup();
+
 	game.add.sprite(0,0,'sky');
 
 	cursors = game.input.keyboard.createCursorKeys();
-	whale1 = create_whale(300,300,'arrow',cursors);
 
-	
+	whale1 = create_whale(700,300,'arrow',cursors);
+	whale2 = create_whale(100,300,'arrow',cursors);
+
 }
 
 function update() {
 	whale1.update();
+	whale2.update();
 }
 
 function create_whale(x,y,sprite,cursors) {
@@ -75,6 +85,13 @@ function create_whale(x,y,sprite,cursors) {
 	game.physics.p2.createRevoluteConstraint(whale.tail,[0,-whale.lower.height/2],
 		whale.lower,[0,whale.lower.height/2],tailJointForce);
 
+  //setup collision groups and collisions
+	whale.upper.body.setCollisionGroup(hitboxCollisionGroup);
+	whale.upper.body.collides(hurtboxCollisionGroup, hitHurtbox.bind(whale));
+
+	whale.lower.body.setCollisionGroup(hurtboxCollisionGroup);
+	whale.lower.body.collides(hitboxCollisionGroup);
+
 	//nuon, update this to use different control schemes
 	whale.cursors = cursors;
 
@@ -93,6 +110,15 @@ function create_whale(x,y,sprite,cursors) {
 		}
 	};
 	return whale;
+}
+
+function hitHurtbox(hitbox, hurtbox) {
+
+	// make sure you're not hitting yourself
+	if (this.lower.body !== hurtbox) {
+		hurtbox.sprite.alpha -= 0.1;
+		hurtbox.sprite.tint = 0xFF0000;
+	}
 }
 
 </script>
