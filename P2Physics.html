@@ -53,6 +53,7 @@ function create() {
 	}
 
 	whales[0].update = whales[0].cursorControl;
+	whales[0].scaleTo(3);
 }
 
 function update() {
@@ -74,44 +75,61 @@ function create_whale(x,y,sprite,cursors,scale) {
 
 	//create upper
 	whale.upper = whale.group.create(x,y,sprite);
-	whale.upper.scale.setTo(scale, scale);
-	game.physics.p2.enable(whale.upper,false);
+	game.physics.p2.enable(whale.upper,true);
 
 	//create lower
 	whale.lower = whale.group.create(x,y+whale.upper.height,sprite);
-	whale.lower.scale.setTo(scale, scale);
-	game.physics.p2.enable(whale.lower,false);
+	game.physics.p2.enable(whale.lower,true);
 	whale.lower.mass = whale.upper.mass/2;
-	//connect upper and lower
-	game.physics.p2.createRevoluteConstraint(whale.lower,[0,-whale.lower.height/2],
-		whale.upper,[0,whale.upper.height/2],middleJointForce);
 
 	//create tail
 	whale.tail = whale.group.create(x,y+whale.upper.height+whale.lower.height,sprite);
-	whale.tail.scale.setTo(0.5*scale,1*scale);
-
-	game.physics.p2.enable(whale.tail,false);
+	game.physics.p2.enable(whale.tail,true);
 	whale.lower.mass = whale.upper.mass/4;
-	//connect tail and lower
-	game.physics.p2.createRevoluteConstraint(whale.tail,[0,-whale.lower.height/2],
-		whale.lower,[0,whale.lower.height/2],tailJointForce);
 
-  //setup collision groups and collisions
-	whale.upper.body.setCollisionGroup(hitboxCollisionGroup);
-	whale.upper.body.collides(hurtboxCollisionGroup, hitHurtbox.bind(whale));
-	whale.upper.body.collides([tailCollisionGroup, hitboxCollisionGroup]);
-
-	whale.lower.body.setCollisionGroup(hurtboxCollisionGroup);
-	whale.lower.body.collides([hitboxCollisionGroup, hurtboxCollisionGroup, tailCollisionGroup]);
-
-	whale.tail.body.setCollisionGroup(tailCollisionGroup);
-	whale.tail.body.collides([hitboxCollisionGroup, hurtboxCollisionGroup, tailCollisionGroup]);
 
 
 	//nuon, update this to use different control schemes
 	whale.cursors = cursors;
 
-	
+	//this sets the scale, it is not a multiplyer
+	whale.scaleTo = function(newScale) {
+		console.log(this);
+		this.upper.scale.setTo(newScale);
+		this.upper.body.setRectangle(this.upper.width,this.upper.height);
+		this.lower.scale.setTo(newScale);
+		this.lower.body.setRectangle(this.lower.width,this.lower.height);
+		this.tail.scale.setTo(newScale);
+		this.tail.body.setRectangle(this.tail.width*.5,this.tail.height);
+
+		game.physics.p2.removeConstraint(this.upperConstraint);
+		whale.upperConstraint = game.physics.p2.createRevoluteConstraint(whale.lower,[0,-whale.lower.height/2],
+		whale.upper,[0,whale.upper.height/2],middleJointForce);
+
+		game.physics.p2.removeConstraint(this.lowerConstraint);
+		whale.lowerConstraint = game.physics.p2.createRevoluteConstraint(whale.tail,[0,-whale.lower.height/2],
+			whale.lower,[0,whale.tail.height/2],tailJointForce);
+
+
+
+		//setup collision groups and collisions
+		this.upper.body.setCollisionGroup(hitboxCollisionGroup);
+		this.upper.body.collides(hurtboxCollisionGroup, hitHurtbox.bind(this));
+		this.upper.body.collides([tailCollisionGroup, hitboxCollisionGroup]);
+
+		this.lower.body.setCollisionGroup(hurtboxCollisionGroup);
+		whale.lower.body.collides([hitboxCollisionGroup, hurtboxCollisionGroup, tailCollisionGroup]);
+
+		whale.tail.body.setCollisionGroup(tailCollisionGroup);
+		whale.tail.body.collides([hitboxCollisionGroup, hurtboxCollisionGroup, tailCollisionGroup]);
+		game.physics.p2.enable(this.upper,true);
+		game.physics.p2.enable(this.lower,true);
+		game.physics.p2.enable(this.tail,true);
+
+		this.scale = newScale;
+	};
+
+	whale.scaleTo(scale);
 
 	whale.cursorControl = function() {
 		if(this.cursors.left.isDown) {
