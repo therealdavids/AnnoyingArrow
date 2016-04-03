@@ -49,7 +49,7 @@ function create() {
 	cursors = game.input.keyboard.createCursorKeys();
 
 	for(i=0; i<10; i++) {
-		whales.push(create_whale(100+i*200,300,'arrow',cursors));
+		whales.push(create_whale(100+i*200,300,'arrow',cursors,1*(Math.random()+.5)));
 	}
 
 }
@@ -60,7 +60,7 @@ function update() {
 	}
 }
 
-function create_whale(x,y,sprite,cursors) {
+function create_whale(x,y,sprite,cursors,scale) {
 
 	//Whale currently has three sections, upper, lower, tail
 	//lower has half the mass of upper, tail has a fourth
@@ -68,22 +68,28 @@ function create_whale(x,y,sprite,cursors) {
 	//all control is applied to upper
 	var whale = {};
 
+	whale.group = game.add.group();
+	whale.scale = scale;
+
 	//create upper
-	whale.upper = game.add.sprite(x,y,sprite);
-	game.physics.p2.enable(whale.upper,false);
+	whale.upper = whale.group.create(x,y,sprite);
+	whale.upper.scale.setTo(scale, scale);
+	game.physics.p2.enable(whale.upper,true);
 
 	//create lower
-	whale.lower = game.add.sprite(x,y+whale.upper.height,sprite);
-	game.physics.p2.enable(whale.lower,false);
+	whale.lower = whale.group.create(x,y+whale.upper.height,sprite);
+	whale.lower.scale.setTo(scale, scale);
+	game.physics.p2.enable(whale.lower,true);
 	whale.lower.mass = whale.upper.mass/2;
 	//connect upper and lower
 	game.physics.p2.createRevoluteConstraint(whale.lower,[0,-whale.lower.height/2],
 		whale.upper,[0,whale.upper.height/2],middleJointForce);
 
 	//create tail
-	whale.tail = game.add.sprite(x,y+whale.upper.height+whale.lower.height,sprite);
-	whale.tail.scale.setTo(0.5,1);
-	game.physics.p2.enable(whale.tail,false);
+	whale.tail = whale.group.create(x,y+whale.upper.height+whale.lower.height,sprite);
+	whale.tail.scale.setTo(0.5*scale,1*scale);
+
+	game.physics.p2.enable(whale.tail,true);
 	whale.lower.mass = whale.upper.mass/4;
 	//connect tail and lower
 	game.physics.p2.createRevoluteConstraint(whale.tail,[0,-whale.lower.height/2],
