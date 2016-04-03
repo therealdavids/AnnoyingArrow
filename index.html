@@ -84,6 +84,9 @@ var tailCollisionGroup;
 var foodCollisionGroup;
 var allCollisionGroups;
 
+var p1hp;
+var p2hp;
+
 function create() {
 	game.physics.startSystem(Phaser.Physics.P2JS);
 	game.physics.p2.updateBoundsCollisionGroup();
@@ -128,6 +131,9 @@ function create() {
 	whales[1].control = whales[1].cursorControl;
 	whales[0].tint = 0xFF00FF;
 
+	p1hp = game.add.text(250, 10, '100%', {} );
+	p2hp = game.add.text(450, 10, '100%', {} );
+
 }
 
 function update(gameData) {
@@ -135,6 +141,8 @@ function update(gameData) {
 		whale.update(gameData);
 	}
 
+	p1hp.text = 'P1: ' + whales[0].getHealth() + '%';
+	p2hp.text = 'P2: ' + whales[1].getHealth() + '%';
 	//clean up dead
 	for(i=0; i<whales.length; i++) {
 		if(whales[i].dead) {
@@ -261,7 +269,7 @@ function create_whale(x,y,sprite,cursors,scale) {
 
 
 		if(input.keyboard.isDown( this.cursors.up )) {
-			curthrust += thrust;	
+			curthrust += thrust;
 		}
 		this.upper.body.thrust(curthrust);
 	};
