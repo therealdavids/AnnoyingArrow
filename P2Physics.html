@@ -24,56 +24,74 @@ function preload() {
 	game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
 }
 
-var platforms;
-var ground;
-var player;
-var cursors;
-var arrow;
-var tail;
+var whale1;
+
+var thrust = 300;
+var rotateForce = 70;
+var middleJointForce = 70;
+var tailJointForce = 50;
+
 
 function create() {
 	game.physics.startSystem(Phaser.Physics.P2JS);
 	game.add.sprite(0,0,'sky');
 
-	arrow = create_whale(300,300).upper;
 	cursors = game.input.keyboard.createCursorKeys();
+	whale1 = create_whale(300,300,'arrow',cursors);
 
 	
 }
 
 function update() {
-	if(cursors.left.isDown) {
-		arrow.body.rotateLeft(70);
-	} else if(cursors.right.isDown){
-		arrow.body.rotateRight(70);
-	} else {
-		arrow.body.setZeroRotation();
-	}
-
-	if(cursors.up.isDown) {
-		arrow.body.thrust(300);
-	} else if(cursors.down.isDown) {
-		arrow.body.reverse(300);
-	}
+	whale1.update();
 }
 
-function create_whale(x,y) {
+function create_whale(x,y,sprite,cursors) {
+
+	//Whale currently has three sections, upper, lower, tail
+	//lower has half the mass of upper, tail has a fourth
+	//still need to add face, pokey, and heart
+	//all control is applied to upper
 	var whale = {};
-	whale.upper = game.add.sprite(x,y,'arrow');
+
+	//create upper
+	whale.upper = game.add.sprite(x,y,sprite);
 	game.physics.p2.enable(whale.upper,false);
 
-	whale.lower = game.add.sprite(x,y+whale.upper.height,'arrow');
+	//create lower
+	whale.lower = game.add.sprite(x,y+whale.upper.height,sprite);
 	game.physics.p2.enable(whale.lower,false);
-	game.physics.p2.createRevoluteConstraint(whale.lower,[0,-whale.lower.height/2],
-		whale.upper,[0,whale.upper.height/2],70);
 	whale.lower.mass = whale.upper.mass/2;
+	//connect upper and lower
+	game.physics.p2.createRevoluteConstraint(whale.lower,[0,-whale.lower.height/2],
+		whale.upper,[0,whale.upper.height/2],middleJointForce);
 
-	whale.tail = game.add.sprite(x,y+whale.upper.height+whale.lower.height,'arrow');
+	//create tail
+	whale.tail = game.add.sprite(x,y+whale.upper.height+whale.lower.height,sprite);
 	whale.tail.scale.setTo(0.5,1);
 	game.physics.p2.enable(whale.tail,false);
-	game.physics.p2.createRevoluteConstraint(whale.tail,[0,-whale.lower.height/2],
-		whale.lower,[0,whale.lower.height/2],50);
 	whale.lower.mass = whale.upper.mass/4;
+	//connect tail and lower
+	game.physics.p2.createRevoluteConstraint(whale.tail,[0,-whale.lower.height/2],
+		whale.lower,[0,whale.lower.height/2],tailJointForce);
+
+	//nuon, update this to use different control schemes
+	whale.cursors = cursors;
+
+	//update function
+	whale.update = function() {
+		if(this.cursors.left.isDown) {
+			this.upper.body.rotateLeft(rotateForce);
+		} else if(this.cursors.right.isDown){
+			this.upper.body.rotateRight(rotateForce);
+		} else {
+			this.upper.body.setZeroRotation();
+		}
+
+		if(this.cursors.up.isDown) {
+			this.upper.body.thrust(thrust);
+		}
+	};
 	return whale;
 }
 
