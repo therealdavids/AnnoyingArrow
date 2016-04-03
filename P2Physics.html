@@ -27,23 +27,23 @@ function preload() {
 	game.cameraShake = game.plugins.add(Phaser.Plugin.CameraShake);
 
 
+
 game.cameraShake.setup({
             shakeRange: 10,
-            shakeCount: 40,
-            shakeInterval: 30,
+            shakeCount: 10,
+            shakeInterval: 20,
             randomShake: false,
             randomizeInterval: true,
             shakeAxis: 'xy'
         });
-
 }
 
 var whales = [];
 
 var thrust = 1400;
 var rotateForce = 70;
-var middleJointForce = 70;
-var tailJointForce = 50;
+var middleJointForce = 170;
+var tailJointForce = 150;
 var maxScale = 2;
 var minScale = 0.5;
 var dieScale = 0.1;
