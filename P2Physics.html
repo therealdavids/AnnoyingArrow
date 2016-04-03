@@ -324,6 +324,10 @@ function create_whale(x,y,sprite,cursors,scale) {
 			this.kill();
 		}
 	};
+
+	whale.getHealth = function() {
+		return Math.round((this.scale - dieScale) /(1-dieScale)*100);
+	}
 	return whale;
 }
 
