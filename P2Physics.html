@@ -29,45 +29,52 @@ var ground;
 var player;
 var cursors;
 var arrow;
-var tail
+var tail;
 
 function create() {
 	game.physics.startSystem(Phaser.Physics.P2JS);
 	game.add.sprite(0,0,'sky');
 
-	//create player
-	// player = game.add.sprite(32,game.world.height-150,'dude');
-	// game.physics.box2d.enable(player);
-	// player.body.fixedRotation = true;
-
-	// player.animations.add('left',[0,1,2,3],10,true);
-	// player.animations.add('right',[5,6,7,8],10,true);
-
+	arrow = create_whale(300,300).upper;
 	cursors = game.input.keyboard.createCursorKeys();
 
-	arrow = game.add.sprite(300,300,'arrow');
-	game.physics.p2.enable(arrow,false);
-
-	tail = game.add.sprite(300,362,'arrow');
-	//tail.body.mass = arrow.body.mass/2;
-	game.physics.p2.enable(tail,false);
-	game.physics.p2.createRevoluteConstraint(tail,[0,-31],arrow,[0,31],100);
+	
 }
 
 function update() {
 	if(cursors.left.isDown) {
-		arrow.body.rotateLeft(100);
+		arrow.body.rotateLeft(70);
 	} else if(cursors.right.isDown){
-		arrow.body.rotateRight(100);
+		arrow.body.rotateRight(70);
 	} else {
 		arrow.body.setZeroRotation();
 	}
 
 	if(cursors.up.isDown) {
-		arrow.body.thrust(400);
+		arrow.body.thrust(300);
 	} else if(cursors.down.isDown) {
-		arrow.body.reverse(400);
+		arrow.body.reverse(300);
 	}
+}
+
+function create_whale(x,y) {
+	var whale = {};
+	whale.upper = game.add.sprite(x,y,'arrow');
+	game.physics.p2.enable(whale.upper,false);
+
+	whale.lower = game.add.sprite(x,y+whale.upper.height,'arrow');
+	game.physics.p2.enable(whale.lower,false);
+	game.physics.p2.createRevoluteConstraint(whale.lower,[0,-whale.lower.height/2],
+		whale.upper,[0,whale.upper.height/2],70);
+	whale.lower.mass = whale.upper.mass/2;
+
+	whale.tail = game.add.sprite(x,y+whale.upper.height+whale.lower.height,'arrow');
+	whale.tail.scale.setTo(0.5,1);
+	game.physics.p2.enable(whale.tail,false);
+	game.physics.p2.createRevoluteConstraint(whale.tail,[0,-whale.lower.height/2],
+		whale.lower,[0,whale.lower.height/2],50);
+	whale.lower.mass = whale.upper.mass/4;
+	return whale;
 }
 
 </script>
