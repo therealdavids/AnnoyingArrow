@@ -273,8 +273,6 @@ function create_whale(x,y,sprite,cursors,scale) {
 function hitHurtbox(hitbox, hurtbox) {
 	// make sure you're not hitting yourself
 	if (this.lower.body !== hurtbox) {
-		hurtbox.sprite.alpha -= 0.1;
-		hurtbox.sprite.tint = 0x0000FF;
 		hurtbox.sprite.beingEaten = true;
 		hitbox.sprite.eatFish = true;
 
@@ -282,8 +280,6 @@ function hitHurtbox(hitbox, hurtbox) {
 		var size = 30;
 		food.width = size;
 		food.height = size;
-
-		game.cameraShake.shake();
 
 
 		setTimeout(function(){
