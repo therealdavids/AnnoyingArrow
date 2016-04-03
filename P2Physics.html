@@ -67,13 +67,17 @@ game.cameraShake.setup({
 
 var whales = [];
 
-var thrust = 1400;
+var thrust = 1000;
+var turnForwardThrust = 200;
 var rotateForce = 70;
 var middleJointForce = 170;
 var tailJointForce = 150;
 var maxScale = 2;
 var minScale = 0.5;
 var dieScale = 0.1;
+var starValue = 0.05;
+var eatValue = 0.05;
+var hurtValue = 0.01;
 
 var hitboxCollisionGroup;
 var hurtboxCollisionGroup;
@@ -214,6 +218,9 @@ function create_whale(x,y,sprite,cursors,scale) {
 		whale.lowerConstraint = game.physics.p2.createRevoluteConstraint(whale.tail,[0,-whale.lower.height/2],
 			whale.lower,[0,whale.tail.height/2],tailJointForce);
 
+		this.lower.body.mass = this.upper.body.mass/2;
+		this.tail.body.mass = this.upper.body.mass/4;
+
 
 
 		//setup collision groups and collisions
@@ -238,10 +245,13 @@ function create_whale(x,y,sprite,cursors,scale) {
 
 	var input = game.input;
 	whale.cursorControl = function() {
+		var curthrust = 0;
 		if( input.keyboard.isDown( this.cursors.left ) ) {
 			this.upper.body.rotateLeft(rotateForce);
+			curthrust += turnForwardThrust;
 		} else if( input.keyboard.isDown( this.cursors.right ) ){
 			this.upper.body.rotateRight(rotateForce);
+			curthrust += turnForwardThrust;
 		} else {
 			this.upper.body.setZeroRotation();
 		}
@@ -252,8 +262,9 @@ function create_whale(x,y,sprite,cursors,scale) {
 
 
 		if(input.keyboard.isDown( this.cursors.up )) {
-			this.upper.body.thrust(thrust);
+			curthrust += thrust;	
 		}
+		this.upper.body.thrust(curthrust);
 	};
 
 	whale.randomControl = function() {
@@ -297,15 +308,15 @@ function create_whale(x,y,sprite,cursors,scale) {
 		this.control();
 		if(this.upper.eatFood) {
 			this.upper.eatFood = false;
-			this.scaleTo(this.scale+.1);
+			this.scaleTo(this.scale+starValue);
 		}
 		if(this.upper.eatFish) {
 			this.upper.eatFish = false;
-			this.scaleTo(this.scale+.1);
+			this.scaleTo(this.scale+eatValue);
 		}
 		if(this.lower.beingEaten) {
 			this.lower.beingEaten = false;
-			this.scaleTo(this.scale-.1);
+			this.scaleTo(this.scale-hurtValue);
 		}
 		// if(this.scale > maxScale) {
 		// 	this.scaleTo(minScale);
