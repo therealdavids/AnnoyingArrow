@@ -26,7 +26,7 @@ function preload() {
 
 var whales = [];
 
-var thrust = 300;
+var thrust = 1400;
 var rotateForce = 70;
 var middleJointForce = 70;
 var tailJointForce = 50;
@@ -60,19 +60,26 @@ function create() {
 		down: Phaser.Keyboard.S,
 		left: Phaser.Keyboard.A,
 		right: Phaser.Keyboard.D,
+		burst: Phaser.Keyboard.Z
 	};
 
-	for(i=0; i<3; i++) {
-		whales.push(create_whale(100+i*200,300,'arrow',wasd_cursor,1*(Math.random()+.5)));
-	}
+	whales.push(create_whale(100+200,300,'arrow',wasd_cursor,1));
+	whales.push(create_whale(100+2*200,300,'arrow', {
+		up: Phaser.Keyboard.K,
+		down: Phaser.Keyboard.J,
+		left: Phaser.Keyboard.H,
+		right: Phaser.Keyboard.L,
+		burst: Phaser.Keyboard.V
+	},1));
 
 	whales[0].control = whales[0].cursorControl;
-	whales[0].scaleTo(3);
+	whales[1].control = whales[1].cursorControl;
+
 }
 
-function update() {
+function update(gameData) {
 	for(whale of whales) {
-		whale.update();
+		whale.update(gameData);
 	}
 
 	//clean up dead
@@ -123,11 +130,11 @@ function create_whale(x,y,sprite,cursors,scale) {
 	whale.scaleTo = function(newScale) {
 		//console.log(this);
 		this.upper.scale.setTo(newScale);
-		this.upper.body.setRectangle(this.upper.width,this.upper.height);
+		this.upper.body.setRectangle(this.upper.wigameDatah,this.upper.height);
 		this.lower.scale.setTo(newScale);
-		this.lower.body.setRectangle(this.lower.width,this.lower.height);
+		this.lower.body.setRectangle(this.lower.wigameDatah,this.lower.height);
 		this.tail.scale.setTo(newScale*0.5,newScale);
-		this.tail.body.setRectangle(this.tail.width,this.tail.height);
+		this.tail.body.setRectangle(this.tail.wigameDatah,this.tail.height);
 
 		game.physics.p2.removeConstraint(this.upperConstraint);
 		whale.upperConstraint = game.physics.p2.createRevoluteConstraint(whale.lower,[0,-whale.lower.height/2],
@@ -168,6 +175,10 @@ function create_whale(x,y,sprite,cursors,scale) {
 		} else {
 			this.upper.body.setZeroRotation();
 		}
+		if(input.keyboard.isDown( this.cursors.burst )) {
+			this.upper.body.thrust(thrust * 3);
+		}
+
 
 		if(input.keyboard.isDown( this.cursors.up )) {
 			this.upper.body.thrust(thrust);
@@ -195,12 +206,23 @@ function create_whale(x,y,sprite,cursors,scale) {
 		this.lower.destroy();
 		this.tail.destroy();
 		this.dead = true;
+
+		alert('WIN!')
 	};
 
 	//update function
 	whale.control = whale.randomControl;
 
-	whale.update = function() {
+	whale.time = 0;
+	whale.update = function(gameData) {
+		var dt = gameData.time.now - gameData.time.lastTime ;
+		if ( whale.time < 110 ) {
+			whale.time += Math.abs(dt);
+		} else {
+			console.log('SECOND');
+			whale.time = 0;
+		}
+
 		this.control();
 		if(this.upper.eatFood) {
 			this.upper.eatFood = false;
@@ -233,6 +255,9 @@ function hitHurtbox(hitbox, hurtbox) {
 		hitbox.sprite.eatFish = true;
 
 		var food = game.add.sprite(hurtbox.x,hurtbox.y,'star');
+		var size = 30;
+		food.width = size;
+		food.height = size;
 
 		setTimeout(function(){
 			game.physics.p2.enable(food,false);
