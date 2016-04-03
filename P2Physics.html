@@ -258,9 +258,9 @@ function create_whale(x,y,sprite,cursors,scale) {
 			this.lower.beingEaten = false;
 			this.scaleTo(this.scale-.1);
 		}
-		if(this.scale > maxScale) {
-			this.scaleTo(minScale);
-		}
+		// if(this.scale > maxScale) {
+		// 	this.scaleTo(minScale);
+		// }
 		if(this.scale < dieScale) {
 			this.kill();
 		}
