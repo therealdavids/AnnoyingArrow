@@ -26,7 +26,7 @@ function preload() {
 
 var whales = [];
 
-var thrust = 300;
+var thrust = 1400;
 var rotateForce = 70;
 var middleJointForce = 70;
 var tailJointForce = 50;
@@ -61,12 +61,17 @@ function create() {
 		right: Phaser.Keyboard.D,
 	};
 
-	for(i=0; i<10; i++) {
-		whales.push(create_whale(100+i*200,300,'arrow',wasd_cursor,1*(Math.random()+.5)));
-	}
+	whales.push(create_whale(100+200,300,'arrow',wasd_cursor,1));
+	whales.push(create_whale(100+2*200,300,'arrow', {
+		up: Phaser.Keyboard.K,
+		down: Phaser.Keyboard.J,
+		left: Phaser.Keyboard.H,
+		right: Phaser.Keyboard.L
+	},1));
 
 	whales[0].control = whales[0].cursorControl;
-	whales[0].scaleTo(3);
+	whales[1].control = whales[1].cursorControl;
+
 }
 
 function update() {
