@@ -12,6 +12,7 @@
 </head>
 <body>
 
+<script src="shake.js"></script>
 <script type="text/javascript">
 
 var game = new Phaser.Game(800, 600, Phaser.CANVAS, '', { preload: preload, create: create, update: update });
@@ -23,14 +24,27 @@ function preload() {
 	game.load.image('arrow', 'assets/arrow.png');
 	game.load.image('diamond', 'assets/diamond.png')
 	game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+
+	game.cameraShake = game.plugins.add(Phaser.Plugin.CameraShake);
+
+
+
+game.cameraShake.setup({
+            shakeRange: 10,
+            shakeCount: 10,
+            shakeInterval: 20,
+            randomShake: false,
+            randomizeInterval: true,
+            shakeAxis: 'xy'
+        });
 }
 
 var whales = [];
 
 var thrust = 1400;
 var rotateForce = 70;
-var middleJointForce = 70;
-var tailJointForce = 50;
+var middleJointForce = 170;
+var tailJointForce = 150;
 var maxScale = 2;
 var minScale = 0.5;
 var dieScale = 0.1;
@@ -63,15 +77,23 @@ function create() {
 		right: Phaser.Keyboard.D,
 		burst: Phaser.Keyboard.Z
 	};
-
-	whales.push(create_whale(100+200,300,'arrow',wasd_cursor,1));
-	whales.push(create_whale(100+2*200,300,'arrow', {
+	var arrow_cursor = {
+		up: Phaser.Keyboard.UP,
+		down: Phaser.Keyboard.DOWN,
+		left: Phaser.Keyboard.LEFT,
+		right: Phaser.Keyboard.RIGHT,
+		burst: Phaser.Keyboard.SHIFT
+	};
+	var vim_cursor = {
 		up: Phaser.Keyboard.K,
 		down: Phaser.Keyboard.J,
 		left: Phaser.Keyboard.H,
 		right: Phaser.Keyboard.L,
 		burst: Phaser.Keyboard.V
-	},1));
+	};
+
+	whales.push(create_whale(100+200,300,'arrow',wasd_cursor,1));
+	whales.push(create_whale(100+2*200,300,'arrow', arrow_cursor,1));
 
 	whales[0].control = whales[0].cursorControl;
 	whales[1].control = whales[1].cursorControl;
@@ -277,6 +299,9 @@ function hitHurtbox(hitbox, hurtbox) {
 		var size = 30;
 		food.width = size;
 		food.height = size;
+
+		game.cameraShake.shake();
+
 
 		setTimeout(function(){
 			game.physics.p2.enable(food,false);
