@@ -50,8 +50,15 @@ function create() {
 
 	cursors = game.input.keyboard.createCursorKeys();
 
+	var wasd_cursor = {
+		up: Phaser.Keyboard.W,
+		down: Phaser.Keyboard.S,
+		left: Phaser.Keyboard.A,
+		right: Phaser.Keyboard.D,
+	};
+
 	for(i=0; i<10; i++) {
-		whales.push(create_whale(100+i*200,300,'arrow',cursors,1*(Math.random()+.5)));
+		whales.push(create_whale(100+i*200,300,'arrow',wasd_cursor,1*(Math.random()+.5)));
 	}
 
 	whales[0].update = whales[0].cursorControl;
@@ -143,20 +150,21 @@ function create_whale(x,y,sprite,cursors,scale) {
 
 	whale.scaleTo(scale);
 
+	var input = game.input;
 	whale.cursorControl = function() {
 		this.scaleTo(this.scale+this.dScale);
 		if(this.scale > 3 || this.scale < .5) {
 			this.dScale = - this.dScale;
 		}
-		if(this.cursors.left.isDown) {
+		if( input.keyboard.isDown( this.cursors.left ) ) {
 			this.upper.body.rotateLeft(rotateForce);
-		} else if(this.cursors.right.isDown){
+		} else if( input.keyboard.isDown( this.cursors.right ) ){
 			this.upper.body.rotateRight(rotateForce);
 		} else {
 			this.upper.body.setZeroRotation();
 		}
 
-		if(this.cursors.up.isDown) {
+		if(input.keyboard.isDown( this.cursors.up )) {
 			this.upper.body.thrust(thrust);
 		}
 	};
