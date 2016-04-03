@@ -114,6 +114,19 @@ function update(gameData) {
 	}
 }
 
+function makeLifespan(min, max) {
+	return Math.random() * (max - min) + min;
+}
+class AfterEffects extends Phaser.Sprite {
+
+	//x, y positions in the game
+	//timeToLive - how long the after affect stays in the game
+  constructor (game, x, y, timeToLive) {
+    super(game, x, y, 'diamond');
+    this.lifespan  = makeLifespan(0,timeToLive);
+  }
+}
+
 function create_whale(x,y,sprite,cursors,scale) {
 
 	//Whale currently has three sections, upper, lower, tail
@@ -143,6 +156,13 @@ function create_whale(x,y,sprite,cursors,scale) {
 	whale.tail = whale.group.create(x,y+whale.upper.height+whale.lower.height,sprite);
 	game.physics.p2.enable(whale.tail,false);
 	whale.lower.mass = whale.upper.mass/4;
+
+	whale.addAfterEffects = function(){
+		for(var i = 0; i < 3; i++){
+			newAfterEffect = new AfterEffects(game, whale.tail.x + whale.tail.deltaX, whale.tail.y + whale.tail.deltaY, 300);
+			game.add.existing(newAfterEffect);
+		}
+	};
 
 	whale.dScale = 0.01;
 
@@ -199,7 +219,7 @@ function create_whale(x,y,sprite,cursors,scale) {
 			this.upper.body.setZeroRotation();
 		}
 		if(input.keyboard.isDown( this.cursors.burst )) {
-			makeRandomEffects()
+			this.addAfterEffects();
 			this.upper.body.thrust(thrust * 3);
 		}
 
@@ -269,24 +289,7 @@ function create_whale(x,y,sprite,cursors,scale) {
 	};
 	return whale;
 }
-function makeLifespan(min, max) {
-	return Math.random() * (max - min) + min;
-}
-class AfterEffects extends Phaser.Sprite {
 
-	//x, y positions in the game
-	//timeToLive - how long the after affect stays in the game
-  constructor (game, x, y, timeToLive) {
-    super(game, x, y, 'diamond');
-    this.lifespan  = makeLifespan(0,timeToLive);
-  }
-}
-function makeRandomEffects(currentSprite, game) { 
-	for(var i = 0; i < 3; i++){
-		newAfterEffect = new AfterEffects(game, currentSprite.x + currentSprite.deltaX, currentSprite.y + currentSprite.deltaY, 300)
-		game.add.existing(newAfterEffect);
-	}
-}
 function hitHurtbox(hitbox, hurtbox) {
 	// make sure you're not hitting yourself
 	if (this.lower.body !== hurtbox) {
