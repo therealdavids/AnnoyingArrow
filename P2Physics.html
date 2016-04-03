@@ -60,6 +60,14 @@ function update() {
 	for(whale of whales) {
 		whale.update();
 	}
+
+	//clean up dead
+	for(i=0; i<whales.length; i++) {
+		if(whales[i].dead) {
+			whales.splice(i,1);
+			i--;
+		}
+	}
 }
 
 function create_whale(x,y,sprite,cursors,scale) {
@@ -72,6 +80,7 @@ function create_whale(x,y,sprite,cursors,scale) {
 
 	whale.group = game.add.group();
 	whale.scale = scale;
+	whale.dead = false;
 
 	//create upper
 	whale.upper = whale.group.create(x,y,sprite);
@@ -163,6 +172,14 @@ function create_whale(x,y,sprite,cursors,scale) {
 			this.upper.body.thrust(thrust);
 		}
 	};
+
+	whale.kill = function() {
+		this.group.pendingDestroy = true;
+		this.upper.destroy();
+		this.lower.destroy();
+		this.tail.destroy();
+		this.dead = true;
+	}
 
 	//update function
 	whale.update = whale.randomControl;
