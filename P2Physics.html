@@ -48,10 +48,10 @@ function create() {
 	arrow = game.add.sprite(300,300,'arrow');
 	game.physics.p2.enable(arrow,false);
 
-	tail = game.add.sprite(250,300,'arrow');
+	tail = game.add.sprite(300,362,'arrow');
 	//tail.body.mass = arrow.body.mass/2;
 	game.physics.p2.enable(tail,false);
-	game.physics.p2.createRevoluteConstraint(tail,[31,0],arrow,[-31,0],20000);
+	game.physics.p2.createRevoluteConstraint(tail,[0,-31],arrow,[0,31],100);
 }
 
 function update() {
