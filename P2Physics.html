@@ -34,6 +34,7 @@ var tailJointForce = 50;
 var hitboxCollisionGroup;
 var hurtboxCollisionGroup;
 var tailCollisionGroup;
+var foodCollisionGroup;
 
 function create() {
 	game.physics.startSystem(Phaser.Physics.P2JS);
@@ -43,6 +44,7 @@ function create() {
 	hitboxCollisionGroup = game.physics.p2.createCollisionGroup();
 	hurtboxCollisionGroup = game.physics.p2.createCollisionGroup();
 	tailCollisionGroup = game.physics.p2.createCollisionGroup();
+	foodCollisionGroup = game.physics.p2.createCollisionGroup();
 
 	game.add.sprite(0,0,'sky');
 
@@ -84,16 +86,16 @@ function create_whale(x,y,sprite,cursors,scale) {
 
 	//create upper
 	whale.upper = whale.group.create(x,y,sprite);
-	game.physics.p2.enable(whale.upper,true);
+	game.physics.p2.enable(whale.upper,false);
 
 	//create lower
 	whale.lower = whale.group.create(x,y+whale.upper.height,sprite);
-	game.physics.p2.enable(whale.lower,true);
+	game.physics.p2.enable(whale.lower,false);
 	whale.lower.mass = whale.upper.mass/2;
 
 	//create tail
 	whale.tail = whale.group.create(x,y+whale.upper.height+whale.lower.height,sprite);
-	game.physics.p2.enable(whale.tail,true);
+	game.physics.p2.enable(whale.tail,false);
 	whale.lower.mass = whale.upper.mass/4;
 
 	whale.dScale = 0.01;
@@ -124,6 +126,7 @@ function create_whale(x,y,sprite,cursors,scale) {
 		//setup collision groups and collisions
 		this.upper.body.setCollisionGroup(hitboxCollisionGroup);
 		this.upper.body.collides(hurtboxCollisionGroup, hitHurtbox.bind(this));
+		this.upper.body.collides(foodCollisionGroup, eatFood.bind(this));
 		this.upper.body.collides([tailCollisionGroup, hitboxCollisionGroup]);
 
 		this.lower.body.setCollisionGroup(hurtboxCollisionGroup);
@@ -131,9 +134,9 @@ function create_whale(x,y,sprite,cursors,scale) {
 
 		whale.tail.body.setCollisionGroup(tailCollisionGroup);
 		whale.tail.body.collides([hitboxCollisionGroup, hurtboxCollisionGroup, tailCollisionGroup]);
-		game.physics.p2.enable(this.upper,true);
-		game.physics.p2.enable(this.lower,true);
-		game.physics.p2.enable(this.tail,true);
+		game.physics.p2.enable(this.upper,false);
+		game.physics.p2.enable(this.lower,false);
+		game.physics.p2.enable(this.tail,false);
 
 		this.scale = newScale;
 	};
@@ -187,12 +190,24 @@ function create_whale(x,y,sprite,cursors,scale) {
 }
 
 function hitHurtbox(hitbox, hurtbox) {
-
 	// make sure you're not hitting yourself
 	if (this.lower.body !== hurtbox) {
 		hurtbox.sprite.alpha -= 0.1;
 		hurtbox.sprite.tint = 0x0000FF;
+		var food = game.add.sprite(hurtbox.x,hurtbox.y,'star');
+
+		game.physics.p2.enable(food,false);
+		food.body.setCollisionGroup(foodCollisionGroup);
+		food.body.collides([hitboxCollisionGroup]);
+
 	}
+}
+
+function eatFood(hitbox, foodbox) {
+	if (foodbox.sprite)
+		foodbox.sprite.kill();
+
+	foodbox.destroy();
 }
 
 </script>
