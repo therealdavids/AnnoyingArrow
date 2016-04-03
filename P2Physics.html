@@ -76,15 +76,23 @@ function create() {
 		right: Phaser.Keyboard.D,
 		burst: Phaser.Keyboard.Z
 	};
-
-	whales.push(create_whale(100+200,300,'arrow',wasd_cursor,1));
-	whales.push(create_whale(100+2*200,300,'arrow', {
+	var arrow_cursor = {
+		up: Phaser.Keyboard.UP,
+		down: Phaser.Keyboard.DOWN,
+		left: Phaser.Keyboard.LEFT,
+		right: Phaser.Keyboard.RIGHT,
+		burst: Phaser.Keyboard.SHIFT
+	};
+	var vim_cursor = {
 		up: Phaser.Keyboard.K,
 		down: Phaser.Keyboard.J,
 		left: Phaser.Keyboard.H,
 		right: Phaser.Keyboard.L,
 		burst: Phaser.Keyboard.V
-	},1));
+	};
+
+	whales.push(create_whale(100+200,300,'arrow',wasd_cursor,1));
+	whales.push(create_whale(100+2*200,300,'arrow', arrow_cursor,1));
 
 	whales[0].control = whales[0].cursorControl;
 	whales[1].control = whales[1].cursorControl;
