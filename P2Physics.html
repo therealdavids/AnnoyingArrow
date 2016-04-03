@@ -74,12 +74,12 @@ function create_whale(x,y,sprite,cursors,scale) {
 	//create upper
 	whale.upper = whale.group.create(x,y,sprite);
 	whale.upper.scale.setTo(scale, scale);
-	game.physics.p2.enable(whale.upper,true);
+	game.physics.p2.enable(whale.upper,false);
 
 	//create lower
 	whale.lower = whale.group.create(x,y+whale.upper.height,sprite);
 	whale.lower.scale.setTo(scale, scale);
-	game.physics.p2.enable(whale.lower,true);
+	game.physics.p2.enable(whale.lower,false);
 	whale.lower.mass = whale.upper.mass/2;
 	//connect upper and lower
 	game.physics.p2.createRevoluteConstraint(whale.lower,[0,-whale.lower.height/2],
@@ -89,7 +89,7 @@ function create_whale(x,y,sprite,cursors,scale) {
 	whale.tail = whale.group.create(x,y+whale.upper.height+whale.lower.height,sprite);
 	whale.tail.scale.setTo(0.5*scale,1*scale);
 
-	game.physics.p2.enable(whale.tail,true);
+	game.physics.p2.enable(whale.tail,false);
 	whale.lower.mass = whale.upper.mass/4;
 	//connect tail and lower
 	game.physics.p2.createRevoluteConstraint(whale.tail,[0,-whale.lower.height/2],
@@ -133,7 +133,7 @@ function hitHurtbox(hitbox, hurtbox) {
 	// make sure you're not hitting yourself
 	if (this.lower.body !== hurtbox) {
 		hurtbox.sprite.alpha -= 0.1;
-		hurtbox.sprite.tint = 0xFF0000;
+		hurtbox.sprite.tint = 0x0000FF;
 	}
 }
 
