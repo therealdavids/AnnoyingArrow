@@ -33,6 +33,7 @@ var tailJointForce = 50;
 
 var hitboxCollisionGroup;
 var hurtboxCollisionGroup;
+var tailCollisionGroup;
 
 function create() {
 	game.physics.startSystem(Phaser.Physics.P2JS);
@@ -41,6 +42,7 @@ function create() {
 
 	hitboxCollisionGroup = game.physics.p2.createCollisionGroup();
 	hurtboxCollisionGroup = game.physics.p2.createCollisionGroup();
+	tailCollisionGroup = game.physics.p2.createCollisionGroup();
 
 	game.add.sprite(0,0,'sky');
 
@@ -88,9 +90,14 @@ function create_whale(x,y,sprite,cursors) {
   //setup collision groups and collisions
 	whale.upper.body.setCollisionGroup(hitboxCollisionGroup);
 	whale.upper.body.collides(hurtboxCollisionGroup, hitHurtbox.bind(whale));
+	whale.upper.body.collides([tailCollisionGroup, hitboxCollisionGroup]);
 
 	whale.lower.body.setCollisionGroup(hurtboxCollisionGroup);
-	whale.lower.body.collides(hitboxCollisionGroup);
+	whale.lower.body.collides([hitboxCollisionGroup, hurtboxCollisionGroup, tailCollisionGroup]);
+
+	whale.tail.body.setCollisionGroup(tailCollisionGroup);
+	whale.tail.body.collides([hitboxCollisionGroup, hurtboxCollisionGroup, tailCollisionGroup]);
+
 
 	//nuon, update this to use different control schemes
 	whale.cursors = cursors;
