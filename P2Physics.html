@@ -331,10 +331,18 @@ function hitHurtbox(hitbox, hurtbox) {
 		if (game.cameraShake._settings.shakeCount == 10)
 			game.cameraShake.shake()
 
+		food.alpha = 0.1;
+		food.scale.setTo (0.1, 0.1);
+		game.add.tween(food)
+			.to({alpha: 1}, 2000, Phaser.Easing.Linear.None, true);
+		game.add.tween(food.scale)
+			.to({x: 1, y: 1}, 2000, Phaser.Easing.Linear.None, true);
+
 		setTimeout(function(){
 			game.physics.p2.enable(food,false);
 			food.body.setCollisionGroup(foodCollisionGroup);
 			food.body.collides(allCollisionGroups);
+			food.body.rotateRight(rotateForce);
 		}, 2000)
 
 
