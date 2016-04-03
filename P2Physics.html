@@ -23,6 +23,8 @@ function preload() {
 	game.load.image('star', 'assets/star.png');
 	game.load.image('arrow', 'assets/arrow.png');
 	game.load.image('diamond', 'assets/diamond.png')
+	game.load.image('arrowgreen', 'assets/arrowgreen.png');
+	game.load.image('arrowred', 'assets/arrowred.png');
 	game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
 
 	game.cameraShake = game.plugins.add(Phaser.Plugin.CameraShake);
@@ -92,11 +94,12 @@ function create() {
 		burst: Phaser.Keyboard.V
 	};
 
-	whales.push(create_whale(100+200,300,'arrow',wasd_cursor,1));
-	whales.push(create_whale(100+2*200,300,'arrow', arrow_cursor,1));
+	whales.push(create_whale(100+200,300,'arrowgreen',wasd_cursor,1));
+	whales.push(create_whale(100+2*200,300,'arrowred', arrow_cursor,1));
 
 	whales[0].control = whales[0].cursorControl;
 	whales[1].control = whales[1].cursorControl;
+	whales[0].tint = 0xFF00FF;
 
 }
 
@@ -293,8 +296,6 @@ function create_whale(x,y,sprite,cursors,scale) {
 function hitHurtbox(hitbox, hurtbox) {
 	// make sure you're not hitting yourself
 	if (this.lower.body !== hurtbox) {
-		hurtbox.sprite.alpha -= 0.1;
-		hurtbox.sprite.tint = 0x0000FF;
 		hurtbox.sprite.beingEaten = true;
 		hitbox.sprite.eatFish = true;
 
@@ -302,8 +303,6 @@ function hitHurtbox(hitbox, hurtbox) {
 		var size = 30;
 		food.width = size;
 		food.height = size;
-
-		game.cameraShake.shake();
 
 
 		setTimeout(function(){
