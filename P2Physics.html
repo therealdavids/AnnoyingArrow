@@ -31,7 +31,7 @@
     </style>
 
     <div id="container">
-    	<img src="tv.png" class="tv" alt="">
+    	<!--<img src="tv.png" class="tv" alt="">-->
     </div>
 </head>
 <body>
@@ -45,7 +45,6 @@ function preload() {
 	game.load.image('sky', 'assets/sky.png');
 	game.load.image('ground', 'assets/platform.png');
 	game.load.image('star', 'assets/star.png');
-	game.load.image('arrow', 'assets/arrow.png');
 	game.load.image('diamond', 'assets/diamond.png')
 	game.load.image('arrowgreen', 'assets/arrowgreen.png');
 	game.load.image('arrowred', 'assets/arrowred.png');
@@ -68,16 +67,16 @@ game.cameraShake.setup({
 var whales = [];
 
 var thrust = 1000;
-var turnForwardThrust = 200;
+var turnForwardThrust = 100;
 var rotateForce = 70;
 var middleJointForce = 500;
 var tailJointForce = 300;
 var maxScale = 2;
 var minScale = 0.5;
-var dieScale = 0.1;
+var dieScale = 0.5;
 var starValue = 0.05;
 var eatValue = 0.05;
-var hurtValue = 0.01;
+var hurtValue = 0.1;
 
 var hitboxCollisionGroup;
 var hurtboxCollisionGroup;
@@ -202,7 +201,7 @@ function create_whale(x,y,sprite,cursors,scale) {
 
 	//this sets the scale, it is not a multiplyer
 	whale.scaleTo = function(newScale) {
-		//console.log(this);
+		//console.log("Scaling to " + newScale);
 		this.upper.scale.setTo(newScale);
 		this.upper.body.setRectangle(this.upper.wigameDatah,this.upper.height);
 		this.lower.scale.setTo(newScale);
