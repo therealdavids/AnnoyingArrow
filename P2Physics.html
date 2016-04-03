@@ -30,6 +30,8 @@ var thrust = 300;
 var rotateForce = 70;
 var middleJointForce = 70;
 var tailJointForce = 50;
+var maxScale = 2;
+var minScale = 0.5;
 
 var hitboxCollisionGroup;
 var hurtboxCollisionGroup;
@@ -54,7 +56,7 @@ function create() {
 		whales.push(create_whale(100+i*200,300,'arrow',cursors,1*(Math.random()+.5)));
 	}
 
-	whales[0].update = whales[0].cursorControl;
+	whales[0].control = whales[0].cursorControl;
 	whales[0].scaleTo(3);
 }
 
@@ -87,6 +89,8 @@ function create_whale(x,y,sprite,cursors,scale) {
 	//create upper
 	whale.upper = whale.group.create(x,y,sprite);
 	game.physics.p2.enable(whale.upper,false);
+	//record eating food
+	whale.upper.eaten = false;
 
 	//create lower
 	whale.lower = whale.group.create(x,y+whale.upper.height,sprite);
@@ -144,10 +148,10 @@ function create_whale(x,y,sprite,cursors,scale) {
 	whale.scaleTo(scale);
 
 	whale.cursorControl = function() {
-		this.scaleTo(this.scale+this.dScale);
-		if(this.scale > 3 || this.scale < .5) {
-			this.dScale = - this.dScale;
-		}
+		// this.scaleTo(this.scale+this.dScale);
+		// if(this.scale > 3 || this.scale < .5) {
+		// 	this.dScale = - this.dScale;
+		// }
 		if(this.cursors.left.isDown) {
 			this.upper.body.rotateLeft(rotateForce);
 		} else if(this.cursors.right.isDown){
@@ -188,8 +192,14 @@ function create_whale(x,y,sprite,cursors,scale) {
 	whale.control = whale.randomControl;
 
 	whale.update = function() {
-		whale.control();
-
+		this.control();
+		if(this.upper.eaten) {
+			this.upper.eaten = false;
+			this.scaleTo(this.scale+.1);
+			if(this.scale > maxScale) {
+				this.scaleTo(minScale);
+			}
+		}
 	};
 	return whale;
 }
@@ -213,6 +223,7 @@ function eatFood(hitbox, foodbox) {
 		foodbox.sprite.kill();
 
 	foodbox.destroy();
+	hitbox.sprite.eaten = true;
 }
 
 </script>
