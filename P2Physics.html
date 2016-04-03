@@ -87,20 +87,20 @@ function create_whale(x,y,sprite,cursors,scale) {
 	game.physics.p2.enable(whale.tail,true);
 	whale.lower.mass = whale.upper.mass/4;
 
-
+	whale.dScale = 0.01;
 
 	//nuon, update this to use different control schemes
 	whale.cursors = cursors;
 
 	//this sets the scale, it is not a multiplyer
 	whale.scaleTo = function(newScale) {
-		console.log(this);
+		//console.log(this);
 		this.upper.scale.setTo(newScale);
 		this.upper.body.setRectangle(this.upper.width,this.upper.height);
 		this.lower.scale.setTo(newScale);
 		this.lower.body.setRectangle(this.lower.width,this.lower.height);
-		this.tail.scale.setTo(newScale);
-		this.tail.body.setRectangle(this.tail.width*.5,this.tail.height);
+		this.tail.scale.setTo(newScale*0.5,newScale);
+		this.tail.body.setRectangle(this.tail.width,this.tail.height);
 
 		game.physics.p2.removeConstraint(this.upperConstraint);
 		whale.upperConstraint = game.physics.p2.createRevoluteConstraint(whale.lower,[0,-whale.lower.height/2],
@@ -132,6 +132,10 @@ function create_whale(x,y,sprite,cursors,scale) {
 	whale.scaleTo(scale);
 
 	whale.cursorControl = function() {
+		this.scaleTo(this.scale+this.dScale);
+		if(this.scale > 3 || this.scale < .5) {
+			this.dScale = - this.dScale;
+		}
 		if(this.cursors.left.isDown) {
 			this.upper.body.rotateLeft(rotateForce);
 		} else if(this.cursors.right.isDown){
