@@ -52,6 +52,7 @@ function create() {
 		whales.push(create_whale(100+i*200,300,'arrow',cursors,1*(Math.random()+.5)));
 	}
 
+	whales[0].update = whales[0].cursorControl;
 }
 
 function update() {
@@ -110,12 +111,27 @@ function create_whale(x,y,sprite,cursors,scale) {
 	//nuon, update this to use different control schemes
 	whale.cursors = cursors;
 
-	//update function
-	whale.update = function() {
-		var turn = Math.random()*3;
-		if(this.cursors.left.isDown || turn < 1) {
+	
+
+	whale.cursorControl = function() {
+		if(this.cursors.left.isDown) {
 			this.upper.body.rotateLeft(rotateForce);
-		} else if(this.cursors.right.isDown || turn < 2){
+		} else if(this.cursors.right.isDown){
+			this.upper.body.rotateRight(rotateForce);
+		} else {
+			this.upper.body.setZeroRotation();
+		}
+
+		if(this.cursors.up.isDown) {
+			this.upper.body.thrust(thrust);
+		}
+	};
+
+	whale.randomControl = function() {
+		var turn = Math.random() * 3;
+		if(turn < 1) {
+			this.upper.body.rotateLeft(rotateForce);
+		} else if(turn < 2){
 			this.upper.body.rotateRight(rotateForce);
 		} else {
 			this.upper.body.setZeroRotation();
@@ -125,6 +141,9 @@ function create_whale(x,y,sprite,cursors,scale) {
 			this.upper.body.thrust(thrust);
 		}
 	};
+
+	//update function
+	whale.update = whale.randomControl;
 	return whale;
 }
 
