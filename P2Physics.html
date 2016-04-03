@@ -328,6 +328,8 @@ function hitHurtbox(hitbox, hurtbox) {
 		food.width = size;
 		food.height = size;
 
+		if (game.cameraShake._settings.shakeCount == 10)
+			game.cameraShake.shake()
 
 		setTimeout(function(){
 			game.physics.p2.enable(food,false);
