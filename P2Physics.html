@@ -8,14 +8,36 @@
         body {
             margin: 0;
         }
+
+        .tv {
+        	position: absolute;
+        	display: block;
+        }
+
+        #container {
+        	width: 897px;
+        	height: 631px;
+        	margin: 30px auto;
+        }
+
+       	#container canvas {
+       		width: 600px;
+       		height: 500px;
+       		margin:30px 0 0 70px;
+
+       	}
     </style>
+
+    <div id="container">
+    	<img src="tv.png" class="tv" alt="">
+    </div>
 </head>
 <body>
 
 <script src="shake.js"></script>
 <script type="text/javascript">
 
-var game = new Phaser.Game(800, 600, Phaser.CANVAS, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'container', { preload: preload, create: create, update: update });
 
 function preload() {
 	game.load.image('sky', 'assets/sky.png');
