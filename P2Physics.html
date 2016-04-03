@@ -32,6 +32,7 @@ var middleJointForce = 70;
 var tailJointForce = 50;
 var maxScale = 2;
 var minScale = 0.5;
+var dieScale = 0.1;
 
 var hitboxCollisionGroup;
 var hurtboxCollisionGroup;
@@ -61,7 +62,7 @@ function create() {
 		right: Phaser.Keyboard.D,
 	};
 
-	for(i=0; i<10; i++) {
+	for(i=0; i<3; i++) {
 		whales.push(create_whale(100+i*200,300,'arrow',wasd_cursor,1*(Math.random()+.5)));
 	}
 
@@ -100,11 +101,13 @@ function create_whale(x,y,sprite,cursors,scale) {
 	game.physics.p2.enable(whale.upper,false);
 	//record eating food
 	whale.upper.eatFood = false;
+	whale.upper.eatFish = false;
 
 	//create lower
 	whale.lower = whale.group.create(x,y+whale.upper.height,sprite);
 	game.physics.p2.enable(whale.lower,false);
 	whale.lower.mass = whale.upper.mass/2;
+	whale.lower.beingEaten = false;
 
 	//create tail
 	whale.tail = whale.group.create(x,y+whale.upper.height+whale.lower.height,sprite);
@@ -202,9 +205,20 @@ function create_whale(x,y,sprite,cursors,scale) {
 		if(this.upper.eatFood) {
 			this.upper.eatFood = false;
 			this.scaleTo(this.scale+.1);
-			if(this.scale > maxScale) {
-				this.scaleTo(minScale);
-			}
+		}
+		if(this.upper.eatFish) {
+			this.upper.eatFish = false;
+			this.scaleTo(this.scale+.1);
+		}
+		if(this.lower.beingEaten) {
+			this.lower.beingEaten = false;
+			this.scaleTo(this.scale-.1);
+		}
+		if(this.scale > maxScale) {
+			this.scaleTo(minScale);
+		}
+		if(this.scale < dieScale) {
+			this.kill();
 		}
 	};
 	return whale;
@@ -215,6 +229,8 @@ function hitHurtbox(hitbox, hurtbox) {
 	if (this.lower.body !== hurtbox) {
 		hurtbox.sprite.alpha -= 0.1;
 		hurtbox.sprite.tint = 0x0000FF;
+		hurtbox.sprite.beingEaten = true;
+		hitbox.sprite.eatFish = true;
 
 		var food = game.add.sprite(hurtbox.x,hurtbox.y,'star');
 
