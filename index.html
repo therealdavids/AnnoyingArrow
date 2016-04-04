@@ -28,18 +28,18 @@
        		margin:90px 0 0 70px;
 
        	}
-       	
+
        	.white {
        		color: #fff;
        	}
-       	
+
        	.green {
        		color: #0f0;
        	}
-       	
+
        	.red {
        		color: #f00;
-       	}       	
+       	}
     </style>
 
 
@@ -53,8 +53,8 @@
     	<span class="green">WASD</span>,<span class="red">Arrows</span> : Move <br/>
     	<span class="green">Z </span>, <span class="red">Shift</span> : Fart Diamonds
     </div>
-    
-    
+
+
 <script src="shake.js"></script>
 <script type="text/javascript">
 
@@ -364,6 +364,8 @@ function create_whale(x,y,sprite,cursors,scale) {
 		if(this.lower.beingEaten) {
 			this.lower.beingEaten = false;
 			this.scaleTo(this.scale-hurtValue);
+
+			spawnFood(this.lower.x, this.lower.y);
 		}
 		// if(this.scale > maxScale) {
 		// 	this.scaleTo(minScale);
@@ -385,28 +387,8 @@ function hitHurtbox(hitbox, hurtbox) {
 		hurtbox.sprite.beingEaten = true;
 		hitbox.sprite.eatFish = true;
 
-		var food = game.add.sprite(hurtbox.x,hurtbox.y,'star');
-		var size = 30;
-		food.width = size;
-		food.height = size;
-
 		if (game.cameraShake._settings.shakeCount == 10)
 			game.cameraShake.shake()
-
-		food.alpha = 0.1;
-		food.scale.setTo (0.1, 0.1);
-		game.add.tween(food)
-			.to({alpha: 1}, 2000, Phaser.Easing.Linear.None, true);
-		game.add.tween(food.scale)
-			.to({x: 1, y: 1}, 2000, Phaser.Easing.Linear.None, true);
-
-		setTimeout(function(){
-			game.physics.p2.enable(food,false);
-			food.body.setCollisionGroup(foodCollisionGroup);
-			food.body.collides(allCollisionGroups);
-			food.body.rotateRight(rotateForce);
-		}, 2000)
-
 
 	}
 }
@@ -417,6 +399,27 @@ function eatFood(hitbox, foodbox) {
 
 	foodbox.destroy();
 	hitbox.sprite.eatFood = true;
+}
+
+function spawnFood(x, y) {
+	var food = game.add.sprite(x, y,'star');
+	var size = 30;
+	food.width = size;
+	food.height = size;
+
+	food.alpha = 0.1;
+	food.scale.setTo (0.1, 0.1);
+	game.add.tween(food)
+		.to({alpha: 1}, 2000, Phaser.Easing.Linear.None, true);
+	game.add.tween(food.scale)
+		.to({x: 1, y: 1}, 2000, Phaser.Easing.Linear.None, true);
+
+	setTimeout(function(){
+		game.physics.p2.enable(food,false);
+		food.body.setCollisionGroup(foodCollisionGroup);
+		food.body.collides(allCollisionGroups);
+		food.body.rotateRight(rotateForce);
+	}, 2000)
 }
 
 </script>
